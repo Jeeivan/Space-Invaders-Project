@@ -9,19 +9,50 @@
     margin: 0;
   }
 
-#board {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    background-color: black;
-    margin: 0 auto;
-}
-
 header {
     display: flex;
     justify-content: center;
     color: lightgreen;
     margin: 10px;
     font-size: 50px;
+}
+
+.board {
+    align-items: center;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-wrap: wrap;
+    height: 100%;
+    justify-content: center;
+    height: 600px;
+    width: 600px;
+    margin: 0 auto;
+    background-color: black;
+}
+
+.board div {
+    border: 1px solid lightgrey;
+    flex-grow: 1;
+    color: white;
+    /* height: 10%;
+    width: 10%; */
+  }
+
+.board div.ship {
+    background-image: url("../img/spaceship.png");
+    background-repeat: no-repeat;
+    background-size: contain;
+    cursor: pointer;
+}
+
+.board div.alien {
+    background-image: url("../img/alien.png");
+    background-repeat: no-repeat;
+    background-size: contain;
+    cursor: pointer;
+}
+
+.missile {
+    background-image: url("../img/missile.png");
+    background-color: red;
 }
