@@ -54,5 +54,12 @@ header {
 
 .missile {
     background-image: url("../img/missile.png");
+    background-repeat: no-repeat;
+    background-size: contain;
+    cursor: pointer;
+    background-position: center; 
+}
+
+.bomb {
     background-color: red;
 }
