@@ -12,8 +12,9 @@ const startingPosition = 104;
 let currentPosition = startingPosition;
 
 // Alien
-let aliens = []
+let aliens = [];
 const alienPosition = 1;
+let alienDirection = 1;
 
 // Missile
 class Missile {
@@ -37,16 +38,31 @@ class Missile {
       } else {
         // Add missile to new position
         this.addMissile();
+        // Add collision detection
+        this.checkCollision();
       }
     }, 500); // Adjust the interval as per your preference
   }
 
+  // Add Missile
   addMissile() {
     cells[this.position].classList.add("missile");
   }
 
+  // Removing Missile
   removeMissile() {
     cells[this.position].classList.remove("missile");
+  }
+
+  // Checking Collision with alien
+  checkCollision() {
+    const alienIndex = aliens.indexOf(this.position);
+    if (alienIndex !== -1) {
+      this.removeMissile();
+      cells[this.position].classList.remove("alien");
+      aliens.splice(alienIndex, 1);
+      clearInterval(this.interval);
+    }
   }
 }
 
@@ -68,12 +84,13 @@ function createBoard() {
 
     // Add cell to grid
     board.appendChild(cell);
-    // Add newly created cell to cells arrya
+    // Add newly created cell to cells array
     cells.push(cell);
   }
   // Add cat character class to starting position
   addShip(startingPosition);
   addAlien(alienPosition);
+  setInterval(moveAlien, 500);
 }
 
 // Adding Ship
@@ -95,12 +112,50 @@ function addAlien(position) {
     if (col !== 0 && col !== 1 && col !== width - 2 && col !== width - 1) {
       console.log("Alien being added to the following cell ->", i);
       cells[i].classList.add("alien");
-      aliens.push(i)
+      aliens.push(i);
     }
   }
 }
 
+// Removing Alien
+function removeAlien() {
+  console.log("Alien REMOVED");
+  cells[currentPosition].classList.remove("alien");
+}
+
 // Moving Alien
+function moveAlien() {
+  aliens.forEach((currentAlienPosition, index) => {
+    // Remove alien from current position
+    cells[currentAlienPosition].classList.remove("alien");
+
+    // Calculate new position (move right by one cell)
+    const newAlienPosition = currentAlienPosition + alienDirection;
+
+    // Check if alien reached the right border
+    if (newAlienPosition % width === width - 1 && alienDirection === 1) {
+      // Move down and change direction to left
+      const newDownPosition = newAlienPosition + width;
+      cells[newDownPosition].classList.add("alien");
+      aliens[index] = newDownPosition;
+      alienDirection = -1;
+    } else if (newAlienPosition % width === 0 && alienDirection === -1) {
+      // Move down and change direction to right
+      const newDownPosition = newAlienPosition + width;
+      cells[newDownPosition].classList.add("alien");
+      aliens[index] = newDownPosition;
+    } else {
+      // Add alien to new position
+      cells[newAlienPosition].classList.add("alien");
+      aliens[index] = newAlienPosition;
+    }
+  });
+  if (aliens.includes(currentPosition)) {
+    removeShip();
+    cells[currentPosition].classList.remove("ship");
+    gameOver();
+  }
+}
 
 // Control Movement
 function handleMovement(event) {
@@ -141,10 +196,13 @@ function handleMovement(event) {
   addShip(currentPosition);
 }
 
+// Game Over Function
+function gameOver() {
+  alert("Game Over! You were hit by an alien!");
+}
+
 // ! Events
 document.addEventListener("keyup", handleMovement);
 
 // ! Page Load
 createBoard();
-
-console.log(aliens);
