@@ -17,6 +17,12 @@ header {
     font-size: 50px;
 }
 
+#score {
+    display: flex;
+    justify-content: center;
+    color: blueviolet ;
+ }
+
 .board {
     align-items: center;
     box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2);
@@ -31,9 +37,6 @@ header {
 }
 
 .board div {
-    border: 1px solid lightgrey;
-    flex-grow: 1;
-    color: white;
     /* height: 10%;
     width: 10%; */
   }
@@ -61,5 +64,17 @@ header {
 }
 
 .bomb {
-    background-color: red;
+    background-image: url("../img/bomb.png");
+    background-repeat: no-repeat;
+    background-size: contain;
+    cursor: pointer;
+    background-position: center; 
+}
+
+.explosion {
+    background-image: url("../img/explosion.png");
+    background-repeat: no-repeat;
+    background-size: contain;
+    cursor: pointer;
+    background-position: center; 
 }

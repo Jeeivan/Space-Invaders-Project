@@ -6,6 +6,8 @@ const width = 11;
 const height = 10;
 const cellCount = width * height;
 let cells = [];
+let score = 0;
+const scoreDisplay = document.getElementById("score");
 
 // Spaceship
 const startingPosition = 104;
@@ -15,58 +17,14 @@ let currentPosition = startingPosition;
 let aliens = [];
 let activeAliens = [];
 const alienPosition = 1;
-let alienDirection = 1;
-
-// Missile
-class Missile {
-  constructor(position) {
-    this.position = position;
-    this.interval = null;
-  }
-
-  move() {
-    this.interval = setInterval(() => {
-      // Remove missile from current position
-      this.removeMissile();
-
-      // Calculate new position
-      this.position -= width;
-
-      // Check if missile reached the top
-      if (this.position < 0) {
-        this.removeMissile();
-        clearInterval(this.interval);
-      } else {
-        // Add missile to new position
-        this.addMissile();
-        // Add collision detection
-        this.checkCollision();
-      }
-    }, 500); // Adjust the interval as per your preference
-  }
-
-  // Add Missile
-  addMissile() {
-    cells[this.position].classList.add("missile");
-  }
-
-  // Removing Missile
-  removeMissile() {
-    cells[this.position].classList.remove("missile");
-  }
-
-  // Checking Collision with alien
-  checkCollision() {
-    const alienIndex = aliens.indexOf(this.position);
-    if (alienIndex !== -1) {
-      this.removeMissile();
-      cells[this.position].classList.remove("alien");
-      aliens.splice(alienIndex, 1);
-      clearInterval(this.interval);
-      winGame();
-    }
-  }
-}
+let direction = 1;
+let goingRight = true;
+const invaders = [
+  13, 14, 15, 16, 17, 18, 19, 24, 25, 26, 27, 28, 29, 30, 35, 36, 37, 38, 39,
+  40, 41,
+];
+let aliensRemoved = [];
+let aliensRemaining = invaders.length;
 
 // Alien Bombs
 class Bomb {
@@ -128,16 +86,16 @@ function createBoard() {
     // Add newly created cell to cells array
     cells.push(cell);
   }
-  // Add cat character class to starting position
+  // Add Ship, alien and set inetervals
   addShip(startingPosition);
-  addAlien(alienPosition);
-  setInterval(moveAlien, 1000);
+  addAlien();
+  setInterval(moveAliens, 1000);
   setInterval(dropRandomBomb, 1500);
 }
 
 // Adding Ship
 function addShip(position) {
-  console.log("Ship being added to the following cell ->", position);
+  currentPosition = position;
   cells[position].classList.add("ship");
 }
 
@@ -148,62 +106,55 @@ function removeShip() {
 }
 
 // Adding Alien
-function addAlien(position) {
-  for (let i = 11; i < 43; i++) {
-    const col = i % width;
-    if (col !== 0 && col !== 1 && col !== width - 2 && col !== width - 1) {
-      console.log("Alien being added to the following cell ->", i);
-      cells[i].classList.add("alien");
-      aliens.push(i);
-      activeAliens.push(i); // Add to activeAliens
+function addAlien() {
+  for (let i = 0; i < invaders.length; i++) {
+    if (!aliensRemoved.includes(i)) {
+      cells[invaders[i]].classList.add("alien");
     }
   }
 }
 
 // Removing Alien
 function removeAlien() {
-  console.log("Alien REMOVED");
-  cells[currentPosition].classList.remove("alien");
+  for (let i = 0; i < invaders.length; i++) {
+    cells[invaders[i]].classList.remove("alien");
+  }
+  aliensRemaining--; // Reduce the count of remaining aliens
+  if (aliensRemaining === 0) {
+    winGame(); // Call winGame when no aliens remain
+  }
 }
 
 // Moving Alien
-function moveAlien() {
-  const leftEdge = activeAliens[0] % width === 0;
-  const rightEdge = activeAliens[activeAliens.length - 1] % width === width - 1;
-  console.log(activeAliens.length);
-  console.log(leftEdge);
-  console.log(rightEdge);
-  console.log(activeAliens);
-  aliens.forEach((currentAlienPosition, index) => {
-    // Remove alien from current position
-    cells[currentAlienPosition].classList.remove("alien");
+function moveAliens() {
+  const leftEdge = invaders[0] % width === 0;
+  const rightEdge = invaders[invaders.length - 1] % width === width - 1;
+  removeAlien();
 
-    // Calculate new position (move right by one cell)
-    const newAlienPosition = currentAlienPosition + 1;
-
-    // Check if alien reached the right border
-    if (rightEdge) {
-      // Move down and change direction to left
-      const newDownPosition = newAlienPosition + width;
-      cells[newDownPosition].classList.add("alien");
-      aliens[index] = newDownPosition;
-      alienDirection = -1;
-      activeAliens = activeAliens.map((alien) => alien + 11);
-    } else if (leftEdge) {
-      // Move down and change direction to right
-      const newDownPosition = newAlienPosition + width;
-      cells[newDownPosition].classList.add("alien");
-      aliens[index] = newDownPosition;
-      alienDirection = 1;
-    } else {
-      // Add alien to new position
-      cells[newAlienPosition].classList.add("alien");
-      aliens[index] = newAlienPosition;
+  if (rightEdge && goingRight) {
+    for (let i = 0; i < invaders.length; i++) {
+      invaders[i] += width + 1;
+      direction = -1;
+      goingRight = false;
     }
-  });
-  if (aliens.includes(currentPosition)) {
+  }
+
+  if (leftEdge && !goingRight) {
+    for (let i = 0; i < invaders.length; i++) {
+      invaders[i] += width - 1;
+      direction = 1;
+      goingRight = true;
+    }
+  }
+
+  for (let i = 0; i < invaders.length; i++) {
+    invaders[i] += direction;
+  }
+
+  addAlien();
+
+  if (cells[currentPosition].classList.contains("alien", "ship")) {
     removeShip();
-    cells[currentPosition].classList.remove("ship");
     gameOver();
   }
 }
@@ -217,7 +168,6 @@ function handleMovement(event) {
   const aLeft = 65;
   const right = 39;
   const dRight = 68;
-  const spacebar = 32;
 
   // Remove ship from previous position before updating current position to new cell
   removeShip();
@@ -225,20 +175,15 @@ function handleMovement(event) {
   console.log(currentPosition, width, currentPosition % width);
 
   // Check which key was pressed and execute code
-  if (key === left || (key === aLeft && currentPosition % width !== 0)) {
+  if ((key === left || key === aLeft) && currentPosition % width !== 0) {
     console.log("LEFT");
-    currentPosition--;
+    currentPosition = Math.max(currentPosition - 1, currentPosition - width);
   } else if (
-    key === right ||
-    (key === dRight && currentPosition % width !== width - 1)
+    (key === right || key === dRight) &&
+    currentPosition % width !== width - 1
   ) {
     console.log("RIGHT");
-    currentPosition++;
-  } else if (key === spacebar) {
-    console.log("FIRE!");
-    const missile = new Missile(currentPosition - width);
-    missile.addMissile();
-    missile.move();
+    currentPosition = Math.min(currentPosition + 1, currentPosition + width);
   } else {
     console.log("INVALID KEY");
   }
@@ -249,16 +194,49 @@ function handleMovement(event) {
 
 // Get random alien index
 function getRandomAlienIndex() {
-  return Math.floor(Math.random() * aliens.length);
+  return Math.floor(Math.random() * invaders.length);
 }
 
 // Function to drop bombs from random aliens
 function dropRandomBomb() {
   const randomAlienIndex = getRandomAlienIndex();
-  const randomAlienPosition = aliens[randomAlienIndex];
+  const randomAlienPosition = invaders[randomAlienIndex];
   const bomb = new Bomb(randomAlienPosition);
   bomb.addBomb();
   bomb.move();
+}
+
+// Function to shoot missile
+function shoot(x) {
+  let missile;
+  let currentMissileIdx = currentPosition;
+  function moveMissile() {
+    cells[currentMissileIdx].classList.remove("missile");
+    currentMissileIdx -= width;
+    cells[currentMissileIdx].classList.add("missile");
+
+    if (cells[currentMissileIdx].classList.contains("alien")) {
+      cells[currentMissileIdx].classList.remove("missile");
+      cells[currentMissileIdx].classList.remove("alien");
+      cells[currentMissileIdx].classList.add("explosion");
+
+      setTimeout(
+        () => cells[currentMissileIdx].classList.remove("explosion"),
+        300
+      );
+      clearInterval(missile);
+
+      const alienRemoved = invaders.indexOf(currentMissileIdx);
+      aliensRemoved.push(alienRemoved);
+      score++;
+      scoreDisplay.innerHTML = `Score = ${score}`;
+      console.log(aliensRemoved);
+    }
+  }
+  switch (x.key) {
+    case " ":
+      missile = setInterval(moveMissile, 300);
+  }
 }
 
 // Game Over Function
@@ -268,12 +246,13 @@ function gameOver() {
 
 // Win Game Function
 function winGame() {
-  if (activeAliens.length === 0) {
+  if (score === 21) {
     alert("Congrats! You have destroyed all aliens and saved Earth!");
   }
 }
 
 // ! Events
+document.addEventListener("keyup", shoot);
 document.addEventListener("keyup", handleMovement);
 
 // ! Page Load
