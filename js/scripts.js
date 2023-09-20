@@ -1,13 +1,27 @@
 // ! Variables and elements
 // Board
 const board = document.querySelector(".board");
-
 const width = 11;
 const height = 10;
 const cellCount = width * height;
 let cells = [];
 let score = 0;
 const scoreDisplay = document.getElementById("score");
+loseRow = [99,100,101,102,103,104,105,106,107,108,109];
+gameComplete = false
+
+// To display after game is lost/won
+const gameFinished = document.createElement('h1')
+const playAgain = document.createElement('button')
+playAgain.innerText = 'Play Again'
+const wonGame = document.createElement('h1')
+
+// Audio
+const missileSound= new Audio("../audio/raygun.mp3")
+const gameOverSound = new Audio ("../audio/cod.mp3")
+const startSound = new Audio ("../audio/start.mp3")
+const invaderDestroyed = new Audio ("../audio/downed.mp3")
+const winSound = new Audio ("../audio/victory.mp3")
 
 // Spaceship
 const startingPosition = 104;
@@ -86,7 +100,7 @@ function createBoard() {
     // Add newly created cell to cells array
     cells.push(cell);
   }
-  // Add Ship, alien and set inetervals
+  // Add Ship, alien and set intervals
   addShip(startingPosition);
   addAlien();
   setInterval(moveAliens, 1000);
@@ -107,9 +121,11 @@ function removeShip() {
 
 // Adding Alien
 function addAlien() {
-  for (let i = 0; i < invaders.length; i++) {
-    if (!aliensRemoved.includes(i)) {
-      cells[invaders[i]].classList.add("alien");
+  if (gameComplete !== true) {
+    for (let i = 0; i < invaders.length; i++) {
+      if (!aliensRemoved.includes(i)) {
+        cells[invaders[i]].classList.add("alien");
+      }
     }
   }
 }
@@ -120,9 +136,6 @@ function removeAlien() {
     cells[invaders[i]].classList.remove("alien");
   }
   aliensRemaining--; // Reduce the count of remaining aliens
-  if (aliensRemaining === 0) {
-    winGame(); // Call winGame when no aliens remain
-  }
 }
 
 // Moving Alien
@@ -154,6 +167,9 @@ function moveAliens() {
   addAlien();
 
   if (cells[currentPosition].classList.contains("alien", "ship")) {
+    removeShip();
+    gameOver();
+  } else if (loseRow.some(cellIndex => cells[cellIndex].classList.contains('alien'))) {
     removeShip();
     gameOver();
   }
@@ -199,11 +215,13 @@ function getRandomAlienIndex() {
 
 // Function to drop bombs from random aliens
 function dropRandomBomb() {
-  const randomAlienIndex = getRandomAlienIndex();
-  const randomAlienPosition = invaders[randomAlienIndex];
-  const bomb = new Bomb(randomAlienPosition);
-  bomb.addBomb();
-  bomb.move();
+  if (gameComplete !== true) {
+    const randomAlienIndex = getRandomAlienIndex();
+    const randomAlienPosition = invaders[randomAlienIndex];
+    const bomb = new Bomb(randomAlienPosition);
+    bomb.addBomb();
+    bomb.move();
+  }
 }
 
 // Function to shoot missile
@@ -218,6 +236,9 @@ function shoot(x) {
     if (cells[currentMissileIdx].classList.contains("alien")) {
       cells[currentMissileIdx].classList.remove("missile");
       cells[currentMissileIdx].classList.remove("alien");
+      invaderDestroyed.play()
+      let index = invaders.indexOf(currentMissileIdx)
+      invaders.splice(index, 1)
       cells[currentMissileIdx].classList.add("explosion");
 
       setTimeout(
@@ -231,29 +252,51 @@ function shoot(x) {
       score++;
       scoreDisplay.innerHTML = `Score = ${score}`;
       console.log(aliensRemoved);
+      winGame()
     }
   }
   switch (x.key) {
     case " ":
+      missileSound.play() // This will play audio file for each time missile is fired
       missile = setInterval(moveMissile, 300);
   }
 }
 
 // Game Over Function
 function gameOver() {
-  alert("Game Over! You were hit by an alien!");
+  gameComplete = true
+  removeAllAliens()
+  gameFinished.innerText = `Game Over! You achieved a score of ${score}`
+  gameOverSound.play()
+  board.appendChild(gameFinished)
+  board.appendChild(playAgain)
+
 }
 
 // Win Game Function
 function winGame() {
   if (score === 21) {
-    alert("Congrats! You have destroyed all aliens and saved Earth!");
+    gameComplete = true
+    winSound.play()
+    wonGame.innerText = `Congrats! You have destroyed all aliens and saved Earth! You achieved a score of ${score}` 
+    board.appendChild(wonGame)
+    board.appendChild(playAgain)
   }
+}
+
+function removeAllAliens() {
+  for (let i = 0; i < invaders.length; i++) {
+    cells[invaders[i]].classList.remove("alien");
+  }
+  aliensRemaining = 0;
 }
 
 // ! Events
 document.addEventListener("keyup", shoot);
 document.addEventListener("keyup", handleMovement);
+playAgain.addEventListener('click', () => {
+  window.location.reload()
+})
 
 // ! Page Load
 createBoard();

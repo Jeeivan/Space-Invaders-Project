@@ -5,9 +5,16 @@
   }
 
   body {
+    font-family: 'Inconsolata', monospace;
     height: 100vh;
     margin: 0;
   }
+
+h1 {
+    padding: 10px;
+    color: cadetblue;
+    font-size: 30px;
+}
 
 header {
     display: flex;
@@ -40,6 +47,12 @@ header {
     /* height: 10%;
     width: 10%; */
   }
+
+.board h1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
 .board div.ship {
     background-image: url("../img/spaceship.png");
@@ -78,3 +91,20 @@ header {
     cursor: pointer;
     background-position: center; 
 }
+
+button {
+    margin-top: 4vmin;
+    padding: 2vmin;
+    font-size: 2vmin;
+    border-radius: 4vmin;
+    border: 0.1vmin solid grey;
+    background-color: blueviolet;
+    color: lightgreen;
+}
+
+button:hover {
+    color: blueviolet;
+    background-color: lightgreen;
+    cursor: pointer;
+}
+
