@@ -24,7 +24,7 @@ header {
     font-size: 50px;
 }
 
-#score {
+.title {
     display: flex;
     justify-content: center;
     color: blueviolet ;
@@ -105,6 +105,24 @@ button {
 button:hover {
     color: blueviolet;
     background-color: lightgreen;
+    cursor: pointer;
+}
+
+.leaderboard {
+    margin: 10px;
+    margin-left: 25px;
+}
+
+#reset-leaderboard {
+    color: red;
+    background-color: black;
+    padding: 10px;
+    margin-left: 25px;
+}
+
+#reset-leaderboard:hover {
+    color: black;
+    background-color: red;
     cursor: pointer;
 }
 

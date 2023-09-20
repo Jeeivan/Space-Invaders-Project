@@ -9,6 +9,9 @@ let score = 0;
 const scoreDisplay = document.getElementById("score");
 loseRow = [99,100,101,102,103,104,105,106,107,108,109];
 gameComplete = false
+lives = 3
+const displayLives = document.getElementById('lives')
+displayLives.innerText = `Lives = ${lives}`
 
 // To display after game is lost/won
 const gameFinished = document.createElement('h1')
@@ -22,6 +25,7 @@ const gameOverSound = new Audio ("../audio/cod.mp3")
 const startSound = new Audio ("../audio/start.mp3")
 const invaderDestroyed = new Audio ("../audio/downed.mp3")
 const winSound = new Audio ("../audio/victory.mp3")
+const hitSound = new Audio ("../audio/hit.mp3")
 
 // Spaceship
 const startingPosition = 104;
@@ -73,8 +77,15 @@ class Bomb {
     if (this.position === currentPosition) {
       // Only trigger game over if bomb hits the ship
       this.removeBomb();
-      cells[currentPosition].classList.remove("ship");
-      gameOver();
+      lives--
+      hitSound.play()
+      displayLives.innerText = `Lives = ${lives}`
+      if (lives === 0) {
+        cells[currentPosition].classList.remove("ship");
+        gameOver();
+      }
+      // cells[currentPosition].classList.remove("ship");
+      // gameOver();
     }
   }
 }
@@ -265,18 +276,19 @@ function shoot(x) {
 // Game Over Function
 function gameOver() {
   gameComplete = true
+  saveScoreToLocalStorage(score);
   removeAllAliens()
   gameFinished.innerText = `Game Over! You achieved a score of ${score}`
   gameOverSound.play()
   board.appendChild(gameFinished)
   board.appendChild(playAgain)
-
 }
 
 // Win Game Function
 function winGame() {
   if (score === 21) {
     gameComplete = true
+    saveScoreToLocalStorage(score);
     winSound.play()
     wonGame.innerText = `Congrats! You have destroyed all aliens and saved Earth! You achieved a score of ${score}` 
     board.appendChild(wonGame)
@@ -284,6 +296,7 @@ function winGame() {
   }
 }
 
+// Function to get rid of all aliens on the screen
 function removeAllAliens() {
   for (let i = 0; i < invaders.length; i++) {
     cells[invaders[i]].classList.remove("alien");
@@ -291,12 +304,45 @@ function removeAllAliens() {
   aliensRemaining = 0;
 }
 
+// Function to save score to storage
+function saveScoreToLocalStorage(score) {
+  const leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
+  leaderboard.push(score);
+  localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
+}
+
+function getLeaderboardFromLocalStorage() {
+  return JSON.parse(localStorage.getItem("leaderboard")) || [];
+}
+
+function displayLeaderboard() {
+  const leaderboardList = document.getElementById("leaderboard-list");
+  const leaderboard = getLeaderboardFromLocalStorage();
+  
+  leaderboardList.innerHTML = "";
+  leaderboard.forEach((score, index) => {
+    const listItem = document.createElement("li");
+    listItem.innerText = `Score ${index + 1}: ${score}`;
+    leaderboardList.appendChild(listItem);
+  });
+}
+
+// Reset Leaderboard
+function resetLeaderboard() {
+  localStorage.removeItem("leaderboard");
+  displayLeaderboard(); // Update the displayed leaderboard
+}
+
+
+
 // ! Events
 document.addEventListener("keyup", shoot);
 document.addEventListener("keyup", handleMovement);
 playAgain.addEventListener('click', () => {
   window.location.reload()
 })
+document.getElementById("reset-leaderboard").addEventListener("click", resetLeaderboard);
 
 // ! Page Load
 createBoard();
+displayLeaderboard()
