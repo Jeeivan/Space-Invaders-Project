@@ -27,13 +27,13 @@ const endDisplay = document.getElementById('display')
 const box = document.getElementById('container')
 
 // Audio
-const missileSound= new Audio("../audio/raygun.mp3")
-const gameOverSound = new Audio ("../audio/cod.mp3")
-const startSound = new Audio ("../audio/start.mp3")
-const invaderDestroyed = new Audio ("../audio/downed.mp3")
-const winSound = new Audio ("../audio/victory.mp3")
-const hitSound = new Audio ("../audio/hit.mp3")
-const nextRound = new Audio ("../audio/next.mp3")
+const missileSound= new Audio("./audio/raygun.mp3")
+const gameOverSound = new Audio ("./audio/cod.mp3")
+const startSound = new Audio ("./audio/start.mp3")
+const invaderDestroyed = new Audio ("./audio/downed.mp3")
+const winSound = new Audio ("./audio/victory.mp3")
+const hitSound = new Audio ("./audio/hit.mp3")
+const nextRound = new Audio ("./audio/next.mp3")
 
 // Spaceship
 const startingPosition = 104;
