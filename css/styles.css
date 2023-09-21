@@ -5,10 +5,43 @@
   }
 
   body {
+    background-color: black;
     font-family: 'Inconsolata', monospace;
     height: 100vh;
     margin: 0;
+    color: black;
+    font-size: 20px;
   }
+
+ #gameOver {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+ }
+
+ #container {
+    display: flex;
+    position: absolute;
+    text-align: center;
+    background-color: lightskyblue;
+    padding: 20px;
+    border: solid royalblue;
+    /* border-radius: 10px;
+    height: 500px;
+    width: 300px; */
+ }
+
+ #display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px;
+ }
 
 h1 {
     padding: 10px;
@@ -27,7 +60,7 @@ header {
 .title {
     display: flex;
     justify-content: center;
-    color: blueviolet ;
+    color: blueviolet;
  }
 
 .board {
@@ -41,12 +74,14 @@ header {
     width: 600px;
     margin: 0 auto;
     background-color: black;
+    border-style: solid;
+    border-color: aquamarine;
 }
 
-.board div {
-    /* height: 10%;
-    width: 10%; */
-  }
+.game-display {
+    display: flex;
+    justify-content: center;
+}
 
 .board h1 {
     display: flex;
@@ -93,7 +128,6 @@ header {
 }
 
 button {
-    margin-top: 4vmin;
     padding: 2vmin;
     font-size: 2vmin;
     border-radius: 4vmin;
@@ -107,6 +141,13 @@ button:hover {
     background-color: lightgreen;
     cursor: pointer;
 }
+
+/* #play-again {
+    margin: auto;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+} */
 
 .leaderboard {
     margin: 10px;
