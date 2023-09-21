@@ -77,13 +77,17 @@ class Bomb {
     }, 300); // Adjust the speed of the bomb
   }
 
-  addBomb() {
+addBomb() {
+  if (this.position >= 0 && this.position < cells.length) {
     cells[this.position].classList.add("bomb");
   }
+}
 
-  removeBomb() {
+removeBomb() {
+  if (this.position >= 0 && this.position < cells.length) {
     cells[this.position].classList.remove("bomb");
   }
+}
 
   checkCollision() {
     if (this.position === currentPosition) {
@@ -138,7 +142,6 @@ function addShip(position) {
 
 // Removing Ship
 function removeShip() {
-  console.log("SHIP REMOVED");
   cells[currentPosition].classList.remove("ship");
 }
 
@@ -146,20 +149,22 @@ function removeShip() {
 function addAlien() {
   if (gameComplete !== true) {
     for (let i = 0; i < invaders.length; i++) {
-      if (!aliensRemoved.includes(i)) {
+      if (invaders[i] >= 0 && invaders[i] < cells.length && !aliensRemoved.includes(i)) {
         cells[invaders[i]].classList.add("alien");
       }
     }
   }
 }
 
-// Removing Alien
 function removeAlien() {
   for (let i = 0; i < invaders.length; i++) {
-    cells[invaders[i]].classList.remove("alien");
+    if (invaders[i] >= 0 && invaders[i] < cells.length) {
+      cells[invaders[i]].classList.remove("alien");
+    }
   }
   aliensRemaining--; // Reduce the count of remaining aliens
 }
+
 
 // Moving Alien
 function moveAliens() {
@@ -201,8 +206,7 @@ function moveAliens() {
 // Control Movement
 function handleMovement(event) {
   const key = event.keyCode;
-  console.log(event.keyCode);
-
+  
   const left = 37;
   const aLeft = 65;
   const right = 39;
@@ -211,20 +215,16 @@ function handleMovement(event) {
   // Remove ship from previous position before updating current position to new cell
   removeShip();
 
-  console.log(currentPosition, width, currentPosition % width);
 
   // Check which key was pressed and execute code
   if ((key === left || key === aLeft) && currentPosition % width !== 0) {
-    console.log("LEFT");
     currentPosition = Math.max(currentPosition - 1, currentPosition - width);
   } else if (
     (key === right || key === dRight) &&
     currentPosition % width !== width - 1
   ) {
-    console.log("RIGHT");
     currentPosition = Math.min(currentPosition + 1, currentPosition + width);
   } else {
-    console.log("INVALID KEY");
   }
 
   // Add ship class once currentPosition has been updated
@@ -251,39 +251,50 @@ function dropRandomBomb() {
 function shoot(x) {
   let missile;
   let currentMissileIdx = currentPosition;
+
   function moveMissile() {
-    cells[currentMissileIdx].classList.remove("missile");
-    currentMissileIdx -= width;
-    cells[currentMissileIdx].classList.add("missile");
-
-    if (cells[currentMissileIdx].classList.contains("alien")) {
+    if (
+      currentMissileIdx >= 0 &&
+      currentMissileIdx < cells.length &&
+      cells[currentMissileIdx]
+    ) {
       cells[currentMissileIdx].classList.remove("missile");
-      cells[currentMissileIdx].classList.remove("alien");
-      invaderDestroyed.play()
-      let index = invaders.indexOf(currentMissileIdx)
-      invaders.splice(index, 1)
-      cells[currentMissileIdx].classList.add("explosion");
+      currentMissileIdx -= width;
 
-      setTimeout(
-        () => cells[currentMissileIdx].classList.remove("explosion"),
-        300
-      );
-      clearInterval(missile);
+      if (cells[currentMissileIdx]) {
+        cells[currentMissileIdx].classList.add("missile");
 
-      const alienRemoved = invaders.indexOf(currentMissileIdx);
-      aliensRemoved.push(alienRemoved);
-      score++;
-      scoreDisplay.innerHTML = `Score = ${score}`;
-      console.log(aliensRemoved);
-      winGame()
+        if (cells[currentMissileIdx].classList.contains("alien")) {
+          cells[currentMissileIdx].classList.remove("missile");
+          cells[currentMissileIdx].classList.remove("alien");
+          invaderDestroyed.play();
+          let index = invaders.indexOf(currentMissileIdx);
+          invaders.splice(index, 1);
+          cells[currentMissileIdx].classList.add("explosion");
+
+          setTimeout(
+            () => cells[currentMissileIdx].classList.remove("explosion"),
+            300
+          );
+          clearInterval(missile);
+
+          const alienRemoved = invaders.indexOf(currentMissileIdx);
+          aliensRemoved.push(alienRemoved);
+          score++;
+          scoreDisplay.innerHTML = `Score = ${score}`;
+          winGame();
+        }
+      }
     }
   }
+
   switch (x.key) {
     case " ":
-      missileSound.play() // This will play audio file for each time missile is fired
+      missileSound.play();
       missile = setInterval(moveMissile, 300);
   }
 }
+
 
 // Game Over Function
 function gameOver() {
@@ -333,45 +344,13 @@ function removeAllAliens() {
   aliensRemaining = 0;
 }
 
-// Function to save score to storage
-// function saveScoreToLocalStorage(score) {
-//   const leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
-//   console.log(leaderboard);
-//   leaderboard.push(score);
-//   localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
-
-// }
-
-// function getLeaderboardFromLocalStorage() {
-//   return JSON.parse(localStorage.getItem("leaderboard")) || [];
-// }
-
-// function displayLeaderboard() {
-//   const leaderboardList = document.getElementById("leaderboard-list");
-//   const leaderboard = getLeaderboardFromLocalStorage();
-  
-//   leaderboardList.innerHTML = "";
-//   leaderboard.forEach((score, index) => {
-//     const listItem = document.createElement("li");
-//     listItem.innerText = `Score ${index + 1}: ${score}`;
-//     leaderboardList.appendChild(listItem);
-//   });
-// }
-
-// // Reset Leaderboard
-// function resetLeaderboard() {
-//   localStorage.removeItem("leaderboard");
-//   displayLeaderboard(); // Update the displayed leaderboard
-// }
-
 // ! Events
 document.addEventListener("keyup", shoot);
 document.addEventListener("keyup", handleMovement);
 playAgain.addEventListener('click', () => {
   window.location.reload()
 })
-// document.getElementById("reset-leaderboard").addEventListener("click", resetLeaderboard);
 
 // ! Page Load
 createBoard();
-// displayLeaderboard()
+
