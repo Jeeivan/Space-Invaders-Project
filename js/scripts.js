@@ -16,6 +16,8 @@ displayLives.innerText = `Lives = ${lives}`
 const displayWave = document.getElementById('wave')
 displayWave.innerText = `Wave ${waves}`
 
+const startBtn = document.getElementById('start')
+
 // To display after game is lost/won
 const gameFinished = document.createElement('h1')
 const playAgain = document.createElement('button')
@@ -34,6 +36,7 @@ const invaderDestroyed = new Audio ("./audio/downed.mp3")
 const winSound = new Audio ("./audio/victory.mp3")
 const hitSound = new Audio ("./audio/hit.mp3")
 const nextRound = new Audio ("./audio/next.mp3")
+const bombDrop = new Audio ("./audio/bomb.mp3")
 
 // Spaceship
 const startingPosition = 104;
@@ -205,8 +208,9 @@ function moveAliens() {
 
 // Control Movement
 function handleMovement(event) {
+  if (gameComplete !== true) {
   const key = event.keyCode;
-  
+
   const left = 37;
   const aLeft = 65;
   const right = 39;
@@ -229,7 +233,7 @@ function handleMovement(event) {
 
   // Add ship class once currentPosition has been updated
   addShip(currentPosition);
-}
+}}
 
 // Get random alien index
 function getRandomAlienIndex() {
@@ -243,6 +247,7 @@ function dropRandomBomb() {
     const randomAlienPosition = invaders[randomAlienIndex];
     const bomb = new Bomb(randomAlienPosition);
     bomb.addBomb();
+    bombDrop.play()
     bomb.move();
   }
 }
@@ -290,8 +295,10 @@ function shoot(x) {
 
   switch (x.key) {
     case " ":
-      missileSound.play();
-      missile = setInterval(moveMissile, 300);
+      if (gameComplete !== true) {
+        missileSound.play();
+        missile = setInterval(moveMissile, 300);
+      }
   }
 }
 
@@ -299,7 +306,7 @@ function shoot(x) {
 // Game Over Function
 function gameOver() {
   gameComplete = true
-  // saveScoreToLocalStorage(score);
+  // saveScoreToLocalStorage(score); 
   removeAllAliens()
   clearInterval(moveAliens)
   clearInterval(dropRandomBomb)
@@ -350,7 +357,13 @@ document.addEventListener("keyup", handleMovement);
 playAgain.addEventListener('click', () => {
   window.location.reload()
 })
+startBtn.addEventListener('click', () => {
+  startBtn.style.display = 'none'
+  startSound.play()
+  createBoard()
+})
 
 // ! Page Load
-createBoard();
+// createBoard();
+
 
