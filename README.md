@@ -1,4 +1,4 @@
-# Space-Invaders-Project
+# SEI Unit 1 Project ReadMe
 
 ## Project Description
 
