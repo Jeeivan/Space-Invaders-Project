@@ -78,4 +78,34 @@ Have an if statement for alien touching borders to have them start moving in ano
 Have a restart function that resets the game
 Have this only appear once the lose game is lost
 
+## Challenges
+
+One of the project's main hurdles emerged when I initially chose to use canvas, inspired by visually appealing games. Researching its implementation, I managed to set up a canvas with a ship and one alien, achieving smooth lateral movement.
+
+However, adding more aliens in specific places proved unexpectedly complex, highlighting my limited canvas experience. After consulting with an instructor, we agreed it would be challenging to proceed with canvas. Opting to start afresh with grid on the project's first day, I efficiently caught up by the next day.
+
+## Wins
+
+- I was extremely happy with solving bugs in my game that were happening after I wanted the game to be won or lost
+- I was able to solve these issues through creating a variable for the game being complete and using control flow so that functions of the game would no longer run once the game was complete
+[Insert code here]
+
+## Key Learnings/Takeaways
+
+- I feel much more confident in my skills of using the DOM and adding event listeners
+- I feel more comfortable in using JavaScript and being able to find bugs and be able to go through my code to fix them
+- I am now much more comfortable when delivering my standups and having a plan of what I am going to be doing with my day
+
+
+## Bugs
+
+- One of the bugs I encountered is that sometimes when missiles are being fired it would hit the middle row of aliens first rather than the bottom row
+- Another bug I encountered is that as the waves increase from 2 to 3 the speed of the aliens and bombs increased even further than the set amount, which should have stayed the same
+
+
+## Future Improvements
+
+- I would have aimed to add more emphasis in the planning stage and implement more pseudo code for future projects
+- I would have used this approach when building my projects, prioritizing understanding the logic of what I was meant to do before writing the actual code
+
 
