@@ -78,6 +78,169 @@ Have an if statement for alien touching borders to have them start moving in ano
 Have a restart function that resets the game
 Have this only appear once the lose game is lost
 
+## Build Process
+
+**Setting up the board**
+
+The game board is created using a grid layout with specified dimensions (width and height). The grid cells are represented using an array called ‘cells’, and the spaceship's starting position is set.
+
+```
+const board = document.querySelector(".board");
+const width = 11;
+const height = 10;
+const cellCount = width * height;
+let cells = [];
+let score = 0;
+```
+
+To initialize the game board, the ‘createBoard’ function is employed, which utilizes the cell count to dynamically create grid cells and set up the initial game state.
+
+```
+// CREATE GRID CELLS
+function createBoard() {
+  // Use the cellCount to create our grid cells
+  for (let i = 0; i < cellCount; i++) {
+    // Create div cell
+    const cell = document.createElement("div");
+    // Add index to div element
+    // cell.innerText = i;
+    // Add index to an attribute
+    // cell.dataset.index= i - another way of doing below
+    cell.setAttribute("data-index", i);
+    // Add the height and width to each grid cell (div)
+    cell.style.height = `${100 / height}%`;
+    cell.style.width = `${100 / width}%`;
+
+    // Add cell to grid
+    board.appendChild(cell);
+    // Add newly created cell to cells array
+    cells.push(cell);
+  }
+  // Add Ship, alien and set intervals
+  addShip(startingPosition);
+  addAlien();
+  setInterval(moveAliens, 1000);
+  setInterval(dropRandomBomb, 1500);
+}
+```
+
+***Moving Aliens on the Game Board***
+
+The movement of aliens on the game board is achieved by the ‘moveAliens’ function. It considers the edges of the grid, determines the direction of movement, updates the alien positions, and visually reflects these changes by calling the ‘addAlien’ function.
+
+```
+// Moving Alien
+function moveAliens() {
+  const leftEdge = invaders[0] % width === 0;
+  const rightEdge = invaders[invaders.length - 1] % width === width - 1;
+  removeAlien();
+
+  if (rightEdge && goingRight) {
+    for (let i = 0; i < invaders.length; i++) {
+      invaders[i] += width + 1;
+      direction = -1;
+      goingRight = false;
+    }
+  }
+
+  if (leftEdge && !goingRight) {
+    for (let i = 0; i < invaders.length; i++) {
+      invaders[i] += width - 1;
+      direction = 1;
+      goingRight = true;
+    }
+  }
+
+  for (let i = 0; i < invaders.length; i++) {
+    invaders[i] += direction;
+  }
+
+  addAlien();
+
+  if (cells[currentPosition].classList.contains("alien", "ship")) {
+    removeShip();
+    gameOver();
+  } else if (loseRow.some(cellIndex => cells[cellIndex].classList.contains('alien'))) {
+    removeShip();
+    gameOver();
+  }
+}
+```
+
+***Handling Spaceship Movement***
+
+Spaceship movement is controlled by the ‘handleMovement’ function, responding to key events for left and right movements. It removes the spaceship from its previous position, updates the current position based on the key pressed, and adds the spaceship class to the new position.
+
+```
+function handleMovement(event) {
+  if (gameComplete !== true) {
+  const key = event.keyCode;
+
+  const left = 37;
+  const aLeft = 65;
+  const right = 39;
+  const dRight = 68;
+
+  // Remove ship from previous position before updating current position to new cell
+  removeShip();
+
+
+  // Check which key was pressed and execute code
+  if ((key === left || key === aLeft) && currentPosition % width !== 0) {
+    currentPosition = Math.max(currentPosition - 1, currentPosition - width);
+  } else if (
+    (key === right || key === dRight) &&
+    currentPosition % width !== width - 1
+  ) {
+    currentPosition = Math.min(currentPosition + 1, currentPosition + width);
+  } else {
+  }
+
+  // Add ship class once currentPosition has been updated
+  addShip(currentPosition);
+}}
+
+// Get random alien index
+function getRandomAlienIndex() {
+  return Math.floor(Math.random() * invaders.length);
+}
+```
+
+***Game Over and Win Conditions***
+
+The game includes well-defined conditions for game over and winning. The ‘gameOver function’ is triggered when the player loses all lives, while the ‘winGame’ function is called when either all aliens are destroyed or a specific score is reached.
+
+```
+// Game Over Function
+function gameOver() {
+  gameComplete = true
+  // saveScoreToLocalStorage(score); 
+  removeAllAliens()
+  clearInterval(moveAliens)
+  clearInterval(dropRandomBomb)
+  gameOverSound.play()
+  gameOverDisplay.style.display ='flex'
+  endDisplay.innerText = `Game Over! You reached Wave ${waves} and achieved a score of ${score}`
+  box.appendChild(playAgain)
+}
+
+// Win Game Function
+function winGame() {
+  if (score === 63) {
+    gameComplete = true
+    // saveScoreToLocalStorage(score);
+    clearInterval(moveAliens)
+    clearInterval(dropRandomBomb)
+    winSound.play()
+    gameOverDisplay.style.display ='flex'
+    endDisplay.innerText = `Congrats! You have destroyed all aliens and saved Earth! You achieved a score of ${score}` 
+    box.appendChild(playAgain)
+  } else if (score % 21 === 0) {
+    resetGame()
+  }
+}
+```
+
 ## Challenges
 
 One of the project's main hurdles emerged when I initially chose to use canvas, inspired by visually appealing games. Researching its implementation, I managed to set up a canvas with a ship and one alien, achieving smooth lateral movement.
