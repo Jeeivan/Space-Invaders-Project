@@ -124,7 +124,7 @@ function createBoard() {
 }
 ```
 
-***Moving Aliens on the Game Board***
+**Moving Aliens on the Game Board**
 
 The movement of aliens on the game board is achieved by the ‘moveAliens’ function. It considers the edges of the grid, determines the direction of movement, updates the alien positions, and visually reflects these changes by calling the ‘addAlien’ function.
 
@@ -167,7 +167,7 @@ function moveAliens() {
 }
 ```
 
-***Handling Spaceship Movement***
+**Handling Spaceship Movement**
 
 Spaceship movement is controlled by the ‘handleMovement’ function, responding to key events for left and right movements. It removes the spaceship from its previous position, updates the current position based on the key pressed, and adds the spaceship class to the new position.
 
@@ -206,7 +206,7 @@ function getRandomAlienIndex() {
 }
 ```
 
-***Game Over and Win Conditions***
+**Game Over and Win Conditions**
 
 The game includes well-defined conditions for game over and winning. The ‘gameOver function’ is triggered when the player loses all lives, while the ‘winGame’ function is called when either all aliens are destroyed or a specific score is reached.
 
