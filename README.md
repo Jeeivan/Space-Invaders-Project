@@ -55,7 +55,7 @@ Display the player's score at the end of the game.
 
 ## Planning
 
-[Screenshot of plan using excalidraw]
+![Plan](plan.png)
 
 Have barriers that aliens and spaceship cannot go past
 When 0 aliens are left then it will go to the next level
