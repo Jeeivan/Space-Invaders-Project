@@ -4,6 +4,19 @@
 
 Following week 2 after beginning the SEI course at general assembly we were given the choice of different games to create as part of our week 3 project week. I decided to choose Space Invaders as this was a childhood favourite of mine. The aim of this project was to use all the fundamentals we had learned in HTML, CSS and JavaScript and apply these to create a game with a functioning win/lose mechanic.
 
+## Table of Contents
+
+- [Deployment Link](#deployment-link)
+- [Technologies Used](#technologies-used)
+- [Brief](#brief)
+- [Planning](#planning)
+- [Build Process](#build-process)
+- [Challenges](#challenges)
+- [Wins](#wins)
+- [Key Learnings/Takeaways](#key-learningstakeaways)
+- [Bugs](#bugs)
+- [Future Improvements](#future-improvements)
+
 ## Deployment Link
 
 (https://jeeivan.github.io/Space-Invaders-Project/)
