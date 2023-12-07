@@ -1,4 +1,5 @@
 # SEI Unit 1 Project ReadMe
+![Game Screenshot](example.png)
 
 ## Project Description
 
