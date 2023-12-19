@@ -265,7 +265,35 @@ However, adding more aliens in specific places proved unexpectedly complex, high
 
 - I was extremely happy with solving bugs in my game that were happening after I wanted the game to be won or lost
 - I was able to solve these issues through creating a variable for the game being complete and using control flow so that functions of the game would no longer run once the game was complete
-[Insert code here]
+
+```
+// Game Over Function
+function gameOver() {
+  gameComplete = true
+  removeAllAliens()
+  clearInterval(moveAliens)
+  clearInterval(dropRandomBomb)
+  gameOverSound.play()
+  gameOverDisplay.style.display ='flex'
+  endDisplay.innerText = `Game Over! You reached Wave ${waves} and achieved a score of ${score}`
+  box.appendChild(playAgain)
+}
+
+// Win Game Function
+function winGame() {
+  if (score === 63) {
+    gameComplete = true
+    clearInterval(moveAliens)
+    clearInterval(dropRandomBomb)
+    winSound.play()
+    gameOverDisplay.style.display ='flex'
+    endDisplay.innerText = `Congrats! You have destroyed all aliens and saved Earth! You achieved a score of ${score}` 
+    box.appendChild(playAgain)
+  } else if (score % 21 === 0) {
+    resetGame()
+  }
+}
+```
 
 ## Key Learnings/Takeaways
 
